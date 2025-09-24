@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no"/>
+  <title>Premium Video Store</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tg-bg-color: #0a0a0a;
+      --tg-text-color: #f5f5f5;
+      --tg-hint-color: #aaa;
+      --tg-secondary-bg-color: #1f1f1f;
+      --primary: #00c853;
+      --primary-dark: #009624;
+      --secondary: #ff6d00;
+      --secondary-dark: #e65100;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--tg-bg-color), #1a1a2e);
+      color: var(--tg-text-color);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+    .gold-gradient-bg {
+      background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+      color: #000 !important;
+      box-shadow: 0 8px 0 var(--primary-dark), 0 15px 20px rgba(0, 0, 0, 0.3);
+    }
+    .btn-highlight {
+      background: linear-gradient(45deg, #ff9800, #ff5722) !important;
+      color: #fff !important;
+      font-weight: 600;
+      border-radius: 9999px;
+      padding: 12px 24px;
+      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+    }
+    .btn-highlight:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.6);
+    }
+    .message-box {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      z-index: 1000;
+      transition: all 0.5s ease-in-out;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .message-box.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #333;
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-2xl mx-auto p-4 pb-8">
+    <header class="text-center mb-6">
+      <h1 class="text-3xl font-bold gold-gradient-text">🎬 Premium Video Store</h1>
+      <p class="mt-2">ভিআইপি ইউজার: <span id="user-name"></span> | ID: <span id="user-id"></span></p>
+      <div class="bg-gray-900 py-2 px-4 rounded-full inline-block mt-2">
+        <p class="text-amber-400 font-semibold text-sm">মোট অ্যাড দেখা হয়েছে: <span id="total-ads-watched">0</span> টি</p>
+      </div>
+    </header>
+    
+    <main id="home-section">
+      <div id="videos" class="grid gap-6 md:grid-cols-2">
+        <!-- 10টি ভিডিও পোস্ট সরাসরি যোগ করা হচ্ছে -->
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://i.ibb.co.com/LDXpmvQ6/1756267719399.jpg" alt="বাচ্চাদের ২০ টি প্রিমিয়াম বিডিও একসাথে দেখুন Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের ২০ টি প্রিমিয়াম বিডিও একসাথে দেখুন 🫦</h3>
+          <p class="text-sm text-gray-400">সময়: 13:18 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="0">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://i.ibb.co.com/BJxmZ8P/1756621958601.jpg" alt="বাচ্চাদের এবং দেশি-বিদেশি ১০ টি বিডিও দেখুন Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের এবং দেশি-বিদেশি ১০ টি বিডিও দেখুন</h3>
+          <p class="text-sm text-gray-400">সময়: 12:45 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="1">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://i.ibb.co.com/QvVjdTHK/Screenshot-20250901-135817.jpg" alt="বাচ্চাদের বিডিওর একটি Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের বিডিওর একটি</h3>
+          <p class="text-sm text-gray-400">সময়: 11:59 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="2">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের বিশেষ ভিডিও কালেকশন Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের বিশেষ ভিডিও কালেকশন</h3>
+          <p class="text-sm text-gray-400">সময়: 15:30 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="3">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b5c84b353a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের আনলিমিটেড ভিডিও Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের আনলিমিটেড ভিডিও</h3>
+          <p class="text-sm text-gray-400">সময়: 14:22 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="4">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের প্রিমিয়াম কন্টেন্ট Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের প্রিমিয়াম কন্টেন্ট</h3>
+          <p class="text-sm text-gray-400">সময়: 16:45 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="5">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের এক্সক্লুসিভ ভিডিও Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের এক্সক্লুসিভ ভিডিও</h3>
+          <p class="text-sm text-gray-400">সময়: 12:10 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="6">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b5c84b353a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের স্পেশাল কালেকশন Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের স্পেশাল কালেকশন</h3>
+          <p class="text-sm text-gray-400">সময়: 18:05 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="7">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের প্রিমিয়াম এডিশন Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের প্রিমিয়াম এডিশন</h3>
+          <p class="text-sm text-gray-400">সময়: 13:50 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="8">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+        
+        <div class="bg-gray-800 rounded-xl p-4 shadow mb-4">
+          <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="বাচ্চাদের এক্সট্রা ভিডিও Thumbnail" class="w-full h-auto rounded-lg shadow-lg mb-4"/>
+          <h3 class="text-lg font-bold text-white mb-2">বাচ্চাদের এক্সট্রা ভিডিও</h3>
+          <p class="text-sm text-gray-400">সময়: 17:20 min</p>
+          <p class="text-sm text-amber-400">প্রয়োজন: 10টি অ্যাড</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">0/10 অ্যাড সম্পন্ন</p>
+          <button class="mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold" data-video-index="9">
+            🔒 আনলক করতে অ্যাড দেখুন
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="mt-12 text-center text-sm text-gray-500">
+      <p>&copy; 2025 Premium Video Store</p>
+    </footer>
+  </div>
+  
+  <!-- Custom Message Box -->
+  <div id="message-box" class="message-box"></div>
+
+  <script>
+    // প্রয়োজনীয় DOM উপাদানগুলো নির্বাচন করা হচ্ছে
+    const userNameEl = document.getElementById('user-name');
+    const userIdEl = document.getElementById('user-id');
+    const totalAdsWatchedEl = document.getElementById('total-ads-watched');
+    const messageBox = document.getElementById('message-box');
+
+    // ভিডিওর ডেটা
+    const videos = [
+      { 
+        id: 1,
+        title: "বাচ্চাদের ২০ টি প্রিমিয়াম বিডিও একসাথে দেখুন 🫦", 
+        time: "13:18 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=1",
+        image: "https://i.ibb.co.com/LDXpmvQ6/1756267719399.jpg"
+      },
+      { 
+        id: 2,
+        title: "বাচ্চাদের এবং দেশি-বিদেশি ১০ টি বিডিও দেখুন", 
+        time: "12:45 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=2",
+        image: "https://i.ibb.co.com/BJxmZ8P/1756621958601.jpg"
+      },
+      { 
+        id: 3,
+        title: "বাচ্চাদের বিডিওর একটি", 
+        time: "11:59 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://t.me/+fkdFjnOg4Ns3YzI1",
+        image: "https://i.ibb.co.com/QvVjdTHK/Screenshot-20250901-135817.jpg"
+      },
+      { 
+        id: 4,
+        title: "বাচ্চাদের বিশেষ ভিডিও কালেকশন", 
+        time: "15:30 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=4",
+        image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 5,
+        title: "বাচ্চাদের আনলিমিটেড ভিডিও", 
+        time: "14:22 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=5",
+        image: "https://images.unsplash.com/photo-1611162617474-5b5c84b353a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 6,
+        title: "বাচ্চাদের প্রিমিয়াম কন্টেন্ট", 
+        time: "16:45 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=6",
+        image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 7,
+        title: "বাচ্চাদের এক্সক্লুসিভ ভিডিও", 
+        time: "12:10 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=7",
+        image: "https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 8,
+        title: "বাচ্চাদের স্পেশাল কালেকশন", 
+        time: "18:05 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=8",
+        image: "https://images.unsplash.com/photo-1611162617474-5b5c84b353a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 9,
+        title: "বাচ্চাদের প্রিমিয়াম এডিশন", 
+        time: "13:50 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=9",
+        image: "https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      },
+      { 
+        id: 10,
+        title: "বাচ্চাদের এক্সট্রা ভিডিও", 
+        time: "17:20 min", 
+        ads_required: 10,
+        ads_watched: 0,
+        video_link: "https://www.youtube.com/watch?v=10",
+        image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
+      }
+    ];
+    
+    // অ্যাড জোনের তথ্য - তিনটি ভিন্ন জোন
+    const adZones = [
+      { id: '9715370', sdk: 'show_9715370' },
+      { id: '9500387', sdk: 'show_9500387' },
+      { id: '9730885', sdk: 'show_9730885' }
+    ];
+
+    let totalAdsWatched = 0;
+    let currentAdIndex = 0;
+
+    // কাস্টম মেসেজ বক্স দেখানোর ফাংশন
+    function showMessage(text, isError = false) {
+      messageBox.textContent = text;
+      messageBox.className = 'message-box show ' + (isError ? 'bg-red-600' : 'bg-green-600');
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, 3000);
+    }
+
+    // ডেটা লোড এবং সেভ করার ফাংশন
+    function loadData() {
+      const savedAdsWatched = localStorage.getItem('totalAdsWatched');
+      const savedVideosData = localStorage.getItem('premiumVideos');
+      
+      if (savedAdsWatched) {
+        totalAdsWatched = parseInt(savedAdsWatched);
+        totalAdsWatchedEl.textContent = totalAdsWatched;
+      }
+      
+      if (savedVideosData) {
+        const savedVideos = JSON.parse(savedVideosData);
+        savedVideos.forEach((savedVideo, index) => {
+          if (videos[index]) {
+            videos[index].ads_watched = savedVideo.ads_watched;
+          }
+        });
+        updateVideoCards();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('totalAdsWatched', totalAdsWatched.toString());
+      localStorage.setItem('premiumVideos', JSON.stringify(videos));
+      totalAdsWatchedEl.textContent = totalAdsWatched;
+    }
+
+    // ইউজার ইনফো জেনারেট করা হচ্ছে
+    function generateUserInfo() {
+      const savedName = localStorage.getItem('userName');
+      const savedId = localStorage.getItem('userId');
+      
+      if (savedName && savedId) {
+        userNameEl.textContent = savedName;
+        userIdEl.textContent = savedId;
+      } else {
+        const newName = "User" + Math.floor(1000 + Math.random() * 9000);
+        const newId = "#USR-" + Math.floor(10000 + Math.random() * 90000);
+        
+        userNameEl.textContent = newName;
+        userIdEl.textContent = newId;
+        
+        localStorage.setItem('userName', newName);
+        localStorage.setItem('userId', newId);
+      }
+    }
+
+    // ভিডিও কার্ডগুলো আপডেট করা হচ্ছে
+    function updateVideoCards() {
+      videos.forEach((video, index) => {
+        const card = document.querySelector(`[data-video-index="${index}"]`).closest('.bg-gray-800');
+        const progressBar = card.querySelector('.progress-fill');
+        const progressText = card.querySelector('.text-xs');
+        const button = card.querySelector('button');
+        
+        const progressPercent = (video.ads_watched / video.ads_required) * 100;
+        const unlocked = video.ads_watched >= video.ads_required;
+        
+        progressBar.style.width = `${progressPercent}%`;
+        progressText.textContent = `${video.ads_watched}/${video.ads_required} অ্যাড সম্পন্ন`;
+        
+        if (unlocked) {
+          button.innerHTML = '🔓 Watch Now';
+          button.className = 'mt-3 w-full gold-gradient-bg text-black py-2 px-4 rounded-full text-sm font-semibold';
+        } else {
+          button.innerHTML = '🔒 আনলক করতে অ্যাড দেখুন';
+          button.className = 'mt-3 w-full btn-highlight py-2 px-4 rounded-full text-sm font-semibold';
+        }
+      });
+    }
+
+    // পরবর্তী অ্যাড দেখানোর ফাংশন
+    function showNextAd(videoIndex) {
+      // পরবর্তী অ্যাড জোন নির্বাচন করা হচ্ছে
+      const adZone = adZones[currentAdIndex];
+      currentAdIndex = (currentAdIndex + 1) % adZones.length;
+      
+      // ডায়নামিকভাবে অ্যাড স্ক্রিপ্ট লোড করা হচ্ছে
+      const script = document.createElement('script');
+      script.src = '//libtl.com/sdk.js';
+      script.setAttribute('data-zone', adZone.id);
+      script.setAttribute('data-sdk', adZone.sdk);
+      
+      script.onload = () => {
+        if (typeof window[adZone.sdk] === 'function') {
+          window[adZone.sdk]().then(() => {
+            // অ্যাড সফলভাবে দেখানো হয়েছে
+            videos[videoIndex].ads_watched++;
+            totalAdsWatched++;
+            
+            saveData();
+            updateVideoCards();
+            
+            if (videos[videoIndex].ads_watched >= videos[videoIndex].ads_required) {
+              showMessage(`✅ ভিডিও আনলক করা হয়েছে! এখন দেখতে ক্লিক করুন।`);
+            } else {
+              showMessage(`✅ অ্যাড দেখার জন্য ধন্যবাদ! (${videos[videoIndex].ads_watched}/${videos[videoIndex].ads_required})`);
+            }
+          }).catch(() => {
+            showMessage('❌ অ্যাড লোড হয়নি, আবার চেষ্টা করুন।', true);
+          });
+        } else {
+          showMessage('❌ অ্যাড সিস্টেম লোড হয়নি, আবার চেষ্টা করুন।', true);
+        }
+      };
+      
+      script.onerror = () => {
+        showMessage('❌ অ্যাড লোড হয়নি, আবার চেষ্টা করুন।', true);
+      };
+      
+      // পুরানো অ্যাড স্ক্রিপ্ট সরানো হচ্ছে
+      const oldScript = document.querySelector('script[src="//libtl.com/sdk.js"]');
+      if (oldScript) {
+        oldScript.remove();
+      }
+      
+      // নতুন অ্যাড স্ক্রিপ্ট যোগ করা হচ্ছে
+      document.head.appendChild(script);
+    }
+
+    // DOM লোড হলে ফাংশনগুলো চালানো হচ্ছে
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      generateUserInfo();
+      
+      // প্রতিটি বাটনে ক্লিক ইভেন্ট লিসেনার যোগ করা হচ্ছে
+      document.querySelectorAll('#videos button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = parseInt(e.target.getAttribute('data-video-index'));
+          const video = videos[index];
+          
+          if (video.ads_watched >= video.ads_required) {
+            // ভিডিও খোলা হয়েছে
+            showMessage(`✅ ${video.title} খোলা হয়েছে!`);
+            window.open(video.video_link, '_blank');
+          } else {
+            // অ্যাড দেখানোর প্রক্রিয়া শুরু করা হচ্ছে
+            showNextAd(index);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
